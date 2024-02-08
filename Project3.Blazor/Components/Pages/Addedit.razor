@@ -1,0 +1,81 @@
+﻿@page "/addedit/{studentId?}"
+@inject CommonLogic.Student Student
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+
+<h3>Add/Edit Student</h3>
+
+@if (StudentModel != null)
+{
+    <form>
+        <div class="form-group">
+            <label for="firstName">First Name:</label>
+            <input type="text" class="form-control" id="firstName" @bind="StudentModel.FirstName" />
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name:</label>
+            <input type="text" class="form-control" id="lastName" @bind="StudentModel.LastName" />
+        </div>
+        <!-- Add other form fields as needed -->
+
+        <button type="button" class="btn btn-primary" @onclick="SaveStudent">Save</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+
+        @if (!string.IsNullOrEmpty(studentId))
+        {
+            <button type="button" class="btn btn-danger" @onclick="DeleteStudent">Delete</button>
+        }
+    </form>
+}
+else
+{
+    <p>Student not found.</p>
+}
+
+@code {
+    private CommonLogic.Student StudentModel;
+
+    [Parameter]
+    public string studentId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(studentId) && int.TryParse(studentId, out int id))
+        {
+            StudentModel = CommonLogic.Student.GetAllStudents().FirstOrDefault(s => s.Id == id);
+        }
+        else
+        {
+            StudentModel = new CommonLogic.Student();
+        }
+    }
+
+    private void SaveStudent()
+    {
+        if (string.IsNullOrEmpty(studentId))
+        {
+            // Adding a new student
+            CommonLogic.Student.AddStudent(StudentModel);
+        }
+        else
+        {
+            // Updating an existing student
+            CommonLogic.Student.UpdateStudent(StudentModel);
+        }
+
+        NavigationManager.NavigateTo("/index");
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/index");
+    }
+
+    private void DeleteStudent()
+    {
+        if (!string.IsNullOrEmpty(studentId))
+        {
+            CommonLogic.Student.DeleteStudent(int.Parse(studentId));
+            NavigationManager.NavigateTo("/index");
+        }
+    }
+}

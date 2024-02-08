@@ -1,0 +1,226 @@
+﻿@page "/AddStudent"
+@page "/EditStudent/{studentId}"
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+@inject CommonLogic.IStudentService StudentService
+@inject IJSRuntime JSRuntime
+
+
+<link rel="stylesheet" href="/css/AddEdit.css" />
+<EditForm Model="@newStudent" OnValidSubmit="SubmitForm">
+    <DataAnnotationsValidator />
+
+    <div class="form-container">
+        @{
+
+            if (string.IsNullOrEmpty(studentId))
+            {
+                <h1>   @CommonLogic.Student.AddStudentLabel</h1>
+                ;
+            }
+            else
+            {
+                <h1> @CommonLogic.Student.EditStudentLabel</h1>
+                ;
+            }
+        }
+
+        <br />
+
+
+        <div class="form-group">
+            <label for="firstName">@CommonLogic.Student.FirstNameLabelText<span style="color: red;">*</span></label>
+            <InputText @bind-Value:event="@oninput" @bind-Value="newStudent.FirstName" maxlength="15" type="text" id="firstName" name="firstName" placeholder="@CommonLogic.Student.FirstNamePlaceholder" onkeydown="return /[a-zA-Z ]/i.test(event.key)"></InputText>
+
+        </div>
+        <ValidationMessage class="Error" For="@(()=> newStudent.FirstName)" style="color:red; top:145px"></ValidationMessage>
+
+
+        <div class="form-group">
+            <label for="lastName">@CommonLogic.Student.LastNameLabelText<span style="color: red;">*</span></label>
+            <InputText @bind-Value="newStudent.LastName" maxlength="18" type="text" id="lastName" name="lastName" placeholder="@CommonLogic.Student.LastNamePlaceholder" onkeydown="return /[a-zA-Z ]/i.test(event.key)"></InputText>
+
+        </div>
+
+        <ValidationMessage class="Error" For="@(()=> newStudent.LastName)" style="top:197px"></ValidationMessage>
+
+        <div class="form-group">
+            <label for="gender">@CommonLogic.Student.GenderLabelText<span style="color: red;">*</span></label>
+            <InputSelect @bind-Value="newStudent.Gender">
+
+                <option value="">@CommonLogic.Student.GenderPlaceholder</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </InputSelect>
+        </div>
+
+        <div>  <ValidationMessage class="Error" For="@(()=> newStudent.Gender)" style="top:250px"></ValidationMessage></div>
+
+
+        <div class="form-group">
+            <label for="dateOfBirth">@CommonLogic.Student.DateOfBirthLabelText<span style="color: red;">*</span></label>
+            <InputDate min="@DateTime.Now.ToString("1924-1-1")" max="@DateTime.Now.ToString("2024-12-31")" @bind-Value="newStudent.DateOfBirth" id="dateOfBirth" class="dateOfBirth" @oninput="UpdateAge"></InputDate>
+            <label id="age1" for="age">Age<span style="color: red;">*</span></label>
+
+            <InputNumber min="0" max="99" @bind-Value="newStudent.Age" id="age" @oninput="UpdateDateOfBirth"></InputNumber>
+            <label style="margin-left: 5px;">years</label>
+
+            <ValidationMessage style="top:305px;margin-left:106px;" class="Error" For="@(()=> newStudent.DateOfBirth)"></ValidationMessage>
+        </div>
+
+
+        <ValidationMessage style="top:305px;margin-left:290px;" class="Error" For="@(()=> newStudent.Age)"></ValidationMessage>
+
+        <div class="form-group">
+            <label for="class">Class</label>
+
+            <InputText size="2" @bind-Value="newStudent.Class" id="class" class="Class" placeholder=@CommonLogic.Student.ClassPlaceholder style="margin-top:0px;"></InputText>
+        </div>
+
+        <div class="form-group">
+            <label style="margin-top:20px" for="address" >Address</label>
+            <InputTextArea @bind-Value="newStudent.Address" style="resize:none" id="address" name="address" rows="3" placeholder="@CommonLogic.Student.AddressPlaceholder"></InputTextArea>
+
+        </div>
+
+        <div class="form-group">
+
+            @if (!string.IsNullOrEmpty(studentId))
+            {
+                <button type="button" class="Delete" @onclick="DeleteStudent">@CommonLogic.Student.DeleteButtonText</button>
+            }
+            else
+            {
+                <button type="button" class="Delete" style="background-color: white; color: white;" disabled>Delete</button>
+            }
+
+            <button class="Save" style="margin-left: 264px;" type="submit">@CommonLogic.Student.SaveButtonText</button>
+            <button type="button" class="Cancel" @onclick="CancelEdit">@CommonLogic.Student.CancelButttonText</button>
+        </div>
+
+    </div>
+
+</EditForm>
+
+
+
+
+@code {
+    private CommonLogic.Student newStudent;
+    private EditContext editContext;
+
+    private CommonLogic.Student? StudentModel;
+    [Parameter]
+    public string studentId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(newStudent ?? new CommonLogic.Student());
+
+        if (!string.IsNullOrEmpty(studentId) && int.TryParse(studentId, out int id))
+        {
+            // Retrieve existing student data if studentId is provided
+            var existingStudent = CommonLogic.Student.GetAllStudents().FirstOrDefault(s => s.studentId == id);
+
+            if (existingStudent != null)
+            {
+                // Populate the newStudent object with existing data
+                newStudent = new CommonLogic.Student
+                    {
+                        studentId = existingStudent.studentId,
+                        FirstName = existingStudent.FirstName,
+                        LastName = existingStudent.LastName,
+                        Gender = existingStudent.Gender,
+                        DateOfBirth = existingStudent.DateOfBirth,
+                        Age = existingStudent.Age,
+                        Class = existingStudent.Class,
+                        Address = existingStudent.Address
+                    };
+
+            }
+        }
+        else
+        {
+            // If no studentId is provided, create a new student
+            newStudent = new CommonLogic.Student();
+
+        }
+    }
+
+
+    private void SubmitForm()
+    {
+        newStudent.FirstName = System.Text.RegularExpressions.Regex.Replace(newStudent.FirstName, @"\s+", " ");
+        newStudent.LastName = System.Text.RegularExpressions.Regex.Replace(newStudent.LastName, @"\s+", " ");
+
+        // StudentService.AddStudent(newStudent);
+        // StudentService.UpdateStudent(newStudent);
+        // NavigationManager.NavigateTo("/");
+        @if (!string.IsNullOrEmpty(studentId))
+        {
+            StudentService.UpdateStudent(newStudent);
+        }
+        else
+        {
+            StudentService.AddStudent(newStudent);
+        }
+        NavigationManager.NavigateTo("/");
+    }
+    private async Task DeleteStudent()
+    {
+        if (int.TryParse(studentId, out int parsedstudentId))
+        {
+            var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this student record?");
+
+            if (confirmed)
+            {
+                StudentService.DeleteStudent(parsedstudentId);
+                NavigationManager.NavigateTo("/");
+            }
+
+        }
+    }
+
+
+    private void CancelEdit()
+    {
+
+        NavigationManager.NavigateTo("/");
+    }
+
+
+    private void UpdateAge(ChangeEventArgs e)
+    {
+        try
+        {
+            if (DateTime.TryParse(e.Value.ToString(), out var dateOfBirth))
+            {
+                newStudent.DateOfBirth = dateOfBirth;
+                newStudent.Age = DateTime.Now.Year - dateOfBirth.Year;
+            }
+        }
+        catch (Exception ex) { }
+
+    }
+
+    private void UpdateDateOfBirth(ChangeEventArgs e)
+    {
+        try
+        {
+            if (int.TryParse(e.Value.ToString(), out var age))
+            {
+                newStudent.Age = age;
+                newStudent.DateOfBirth = DateTime.Now.AddYears(-age);
+            }
+        }
+        catch (Exception ex) { }
+
+    }
+
+
+
+
+
+
+
+}

@@ -1,0 +1,137 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Forms
+@inject CommonLogic.IStudentService StudentService
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+
+<body>
+
+  <div id="container">
+    <h1>Our Students</h1>
+
+        <div id="searchandbutton ">
+            <input style="margin-left: 560px;" type="text" @oninput="FilterTable" id="searchInput" placeholder=@CommonLogic.Student.SearchPlaceholder />
+            <button @onclick="GoToAddEditPage">@CommonLogic.Student.AddButtonText</button>
+        </div>
+        <div>
+
+        <table id="studentTable">
+        <thead>
+                    <tr class ="first-row">
+                        <th @onclick="() => SortTable(nameof(CommonLogic.Student.FirstName))">@CommonLogic.Student.FirstNameLabelText</th>
+                        <th @onclick="() => SortTable(nameof(CommonLogic.Student.LastName))">@CommonLogic.Student.LastNameLabelText</th>
+                        <th @onclick="() => SortTable(nameof(CommonLogic.Student.Gender))">@CommonLogic.Student.GenderLabelText</th>
+                        <th @onclick="() => SortTable(nameof(CommonLogic.Student.Age))">@CommonLogic.Student.AgeLabelText</th>
+                        <th @onclick="() => SortTable(nameof(CommonLogic.Student.Class))">@CommonLogic.Student.ClassLabelText</th>
+           
+            </tr>
+          </thead>
+        <tbody>
+            @foreach (var student in filteredStudents)
+            {
+                        <tr @ondblclick="() => EditStudent(student.studentId)" @onclick="() => SelectRow(student.studentId)" class="@GetRowClass(student.studentId)">
+                            
+                    <td>@student.FirstName</td>
+                    <td>@student.LastName</td>
+                    <td>@student.Gender</td>
+                    <td>@student.Age</td>
+                    <td>@student.Class</td>
+                </tr>
+            }
+          </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+
+
+
+@code {
+    private List<CommonLogic.Student> Students;
+    private List<CommonLogic.Student> filteredStudents;
+    private string sortedColumn = nameof(CommonLogic.Student.FirstName);
+    private bool sortAscending = true;
+
+    protected override void OnInitialized()
+    {
+        Students = StudentService.GetAllStudents();
+        filteredStudents = new List<CommonLogic.Student>(Students);
+        if (Students.Any())
+        {
+            selectedRowId = Students.First().studentId;
+
+            // Scroll to the selected row
+            JSRuntime.InvokeVoidAsync("scrollToRow", selectedRowId);
+        }
+    }
+
+    private void GoToAddEditPage()
+    {
+        NavigationManager.NavigateTo("/AddEdit");
+    }
+
+    private void EditStudent(int studentId)
+    {
+        NavigationManager.NavigateTo($"/AddEdit/{studentId}");
+    }
+
+    private void FilterTable(ChangeEventArgs e)
+    {
+        string searchTerm = e.Value?.ToString().ToLowerInvariant();
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredStudents = new List<CommonLogic.Student>(Students);
+        }
+        else
+        {
+            filteredStudents = Students
+                .Where(s =>
+                    s.FirstName.ToLowerInvariant().Contains(searchTerm) ||
+                    s.LastName.ToLowerInvariant().Contains(searchTerm) ||
+                    s.Age.ToString().ToLowerInvariant().Contains(searchTerm))
+                .ToList();
+        }
+    }
+
+    private void SortTable(string column)
+    {
+        if (column == sortedColumn)
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortedColumn = column;
+            sortAscending = true;
+        }
+
+        ApplySorting();
+    }
+
+    private void ApplySorting()
+    {
+        filteredStudents = sortAscending
+            ? filteredStudents.OrderBy(student => GetPropertyValue(student, sortedColumn)).ToList()
+            : filteredStudents.OrderByDescending(student => GetPropertyValue(student, sortedColumn)).ToList();
+    }
+
+    private int selectedRowId = -1;
+
+    private void SelectRow(int studentId)
+    {
+        selectedRowId = studentId;
+    }
+
+    private string GetRowClass(int studentId)
+    {
+        return studentId == selectedRowId ? "selected-row" : "";
+    }
+
+    private object GetPropertyValue(CommonLogic.Student student, string propertyName)
+    {
+        return typeof(CommonLogic.Student).GetProperty(propertyName)?.GetValue(student, null);
+    }
+}
+

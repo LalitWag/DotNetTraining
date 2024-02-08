@@ -1,0 +1,137 @@
+﻿@page "/"
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+
+@inject CommonLogic.IStudentService StudentService;
+
+
+<div id="container">
+    <h1>Our Students</h1>
+
+    <div id="searchandbutton ">
+
+        <input id="searchInput" style="margin-left:600px;" type="text" @bind="searchText" @oninput="SearchTextChanged" placeholder=@CommonLogic.Student.SearchPlaceholder />
+        <button type="button" @onclick="AddStudent">+Add</button>
+
+    </div>
+    <div>
+
+
+        <table id="studentTable">
+            <thead>
+                <tr>
+                    <th @onclick="() => SortStudents(nameof(CommonLogic.Student.FirstName))">First Name</th>
+                    <th @onclick="() => SortStudents(nameof(CommonLogic.Student.LastName))">Last Name</th>
+                    <th @onclick="() => SortStudents(nameof(CommonLogic.Student.Gender))">Gender</th>
+                    <th @onclick="() => SortStudents(nameof(CommonLogic.Student.Age))"> Age</th>
+                    <th @onclick="() => SortStudents(nameof(CommonLogic.Student.Class))">Class</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var (Student, index) in Students.Select((student, index) => (student, index)))
+                {
+                    <tr @ondblclick="() => EditStudent(Student.studentId)"
+                        class="@((highlightedRow == index) ? "highlighted-row" : "")"
+                        @onclick="() => SetHighlightedRow(index)"
+                        style="display: @(IsRowVisible(Student) ? "table-row" : "none")">
+
+
+                        <td>@Student.FirstName</td>
+                        <td>@Student.LastName</td>
+                        <td>@Student.Gender</td>
+                        <td>@Student.Age</td>
+                        <td>@Student.Class</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<link rel="stylesheet" href="/css/Index.css" />
+<style>
+    .highlighted-row {
+        background-color: #eaf2c2;
+    }
+</style>
+@code {
+    private List<CommonLogic.Student> Students;
+    private List<CommonLogic.Student> filteredStudents;
+    private int highlightedRow = 0;
+    private string searchText = "";
+    protected override void OnInitialized()
+    {
+        Students = StudentService.GetAllStudents();
+    }
+    private void AddStudent()
+    {
+
+        NavigationManager.NavigateTo("AddStudent");
+    }
+    private void EditStudent(int studentId)
+    {
+        NavigationManager.NavigateTo($"EditStudent/{studentId}");
+    }
+
+    private void SetHighlightedRow(int index)
+    {
+        highlightedRow = index;
+    }
+    private string currentSortField;
+    private object GetPropertyValue(object obj, string propertyName)
+    {
+        return obj.GetType().GetProperty(propertyName).GetValue(obj, null);
+    }
+    private void SortStudents(string field)
+    {
+        if (currentSortField == field)
+        {
+
+            Students.Reverse();
+        }
+        else
+        {
+
+
+            Students = Students.OrderBy(student => GetPropertyValue(student, field)).ToList();
+            currentSortField = field;
+        }
+    }
+
+
+
+    private void SearchTextChanged(ChangeEventArgs e)
+    {
+        searchText = e.Value.ToString();
+        ApplySearch();
+    }
+
+    private void ApplySearch()
+    {
+        filteredStudents = Students.ToList();
+
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            var searchTextLower = searchText.ToLowerInvariant();
+            filteredStudents = filteredStudents.Where(student =>
+                student.FirstName.ToLowerInvariant().Contains(searchTextLower) ||
+                student.LastName.ToLowerInvariant().Contains(searchTextLower) ||
+                student.Age.ToString().Contains(searchText)
+            ).ToList();
+        }
+
+        SortStudents(currentSortField);
+    }
+    private bool IsRowVisible(CommonLogic.Student student)
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return true;
+        }
+
+        var searchTextLower = searchText.ToLowerInvariant();
+
+        return student.FirstName.ToLowerInvariant().Contains(searchTextLower) ||
+               student.LastName.ToLowerInvariant().Contains(searchTextLower) ||
+               student.Age.ToString().Contains(searchText);
+    }
+}

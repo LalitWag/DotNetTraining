@@ -1,0 +1,168 @@
+﻿.container {
+    display: flex;
+    flex-direction: column;
+    /*  justify-content: center;
+   text-align: center;
+   align-items: center;*/
+    border: 3px solid steelblue;
+    /*Add border properties */ width: 600px;
+    /*Set the width to 640px*/ height: 500px;
+    margin: 0px auto;
+    margin-top: 20px;
+    box-sizing: border-box;
+    /* Include the border in the width calculation*/
+}
+
+h1 {
+    margin-top: 15px;
+    margin-left: 170px;
+}
+
+#age1 {
+    margin-left: 20px;
+}
+
+.form-group {
+    display: flex;
+    margin-left: -10px;
+}
+
+.form-group5 {
+    margin-bottom: 10px;
+}
+
+.form-group1 {
+    display: flex;
+    margin-left: px;
+    /*margin-bottom: 0px;*/
+}
+
+#firstName {
+    width: 350px;
+    margin-left: 21px;
+    border: 1.5px solid steelblue;
+}
+
+#lastName {
+    width: 350px;
+    margin-left: 22px;
+    border: 1.5px solid steelblue;
+}
+
+#gender {
+    width: 175px;
+    margin-left: 45px;
+    border: 1.5px solid steelblue;
+}
+
+#dateOfBirth {
+    height: 30px;
+    width: 175px;
+    margin-left: 8px;
+    border: 1.5px solid steelblue;
+}
+
+#age {
+    width: 50px;
+    margin-left: px;
+    border: 1.5px solid steelblue;
+}
+
+#address {
+    width: 350px;
+    margin-left: 48px;
+    border: 1.5px solid steelblue;
+    margin-top: 20px;
+}
+
+#class {
+    width: 175px;
+    margin-top: 1px;
+    margin-left: 68px;
+    border: 1.5px solid steelblue;
+}
+
+.delete-button {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #D3D3D3;
+    color: red;
+    margin-left: 60px;
+    margin-top: 30px;
+}
+
+.submit-button {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007FFF;
+    color: black;
+    margin-left: 220px;
+    margin-top: 30px;
+}
+
+.cancel-button {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #D3D3D3;
+    color: black;
+    margin-right: 60px;
+    margin-left: 10px;
+    margin-top: 30px;
+}
+
+.error-label {
+    color: red;
+    font-size: 12px;
+}
+
+
+#firstNameError {
+    margin-left: 155px;
+    margin-top: px;
+}
+
+#lastNameError {
+    margin-left: 155px;
+}
+
+#ageError {
+    margin-top: -10px;
+    margin-left: 75px;
+    ;
+}
+
+#dateOfBirthError {
+    margin-left: 155px;
+}
+
+#genderError {
+    margin-left: 155px;
+}
+
+label {
+    margin-top: px;
+    margin-left: 60px;
+}
+
+#ageLabel {
+    /* Styles specific to the age label */
+    color: blue; /* Change color to blue as an example */
+    font-size: 14px; /* Adjust font size as needed */
+    margin-left: 300px; /* Adjust margin-left as needed */
+}
+
+#addressLabel {
+    margin-top: 1000px;
+}

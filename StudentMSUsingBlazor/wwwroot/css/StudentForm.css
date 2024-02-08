@@ -1,0 +1,217 @@
+﻿.form-container {
+    border: 2px solid steelblue; /* Specify the border color here */
+    padding-top:10px;
+    padding-left: 50px; padding-right:50px;
+    width: 550px; /* Add a colon here */
+    height: 530px; /* Add height property */
+    justify-items:center;
+    margin-left: 300px;
+    background-color: white; 
+}
+h1 {
+    margin-top: 5px;
+   text-align:center;
+}
+
+#age1 {
+    margin-left: 20px;
+}
+
+.form-group {
+    display: flex;
+    margin-left: -10px;
+    margin-bottom: 24px;
+   
+}
+
+
+.form-group5 {
+    margin-bottom: 10px;
+}
+
+.form-group1 {
+    display: flex;
+    margin-left: px;
+}
+
+#firstName {
+    width: 350px;
+    margin-left: 21px;
+    border: 1.5px solid steelblue;
+    border-style:solid;
+}
+
+#lastName {
+    width: 350px;
+    margin-left: 22px;
+    border: 1.5px solid steelblue;
+}
+
+#gender {
+    height: 28px;
+    border-color: steelblue;
+    border-width: 1.5px;
+    margin-left: 45px;
+    width: 180px;
+}
+
+#dateOfBirth {
+    height: 30px;
+    width: 180px;
+    margin-left: 10px;
+    border: 1.5px solid steelblue;
+}
+
+#age {
+    width: 50px;
+   
+    border: 1.5px solid steelblue;
+}
+
+#address {
+    width: 350px;
+    margin-left: 46px;
+    border: 1.5px solid steelblue;
+    
+}
+
+#class {
+    width: 180px;
+    margin-top: 1px;
+    margin-left: 65px;
+    border: 1.5px solid steelblue;
+}
+
+.delete-button {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007FFF;
+    color: black;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+.save-button {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007FFF;
+    color: black;
+    margin-left: 10px;
+    margin-top: 20px;
+}
+
+.cancel-button {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #D3D3D3;
+    color: black;
+    margin-right: 60px;
+    margin-left: 10px;
+    margin-top: 30px;
+}
+
+.error-label {
+    color: red;
+    font-size: 12px;
+}
+
+
+#firstNameError {
+    margin-left: 155px;
+    margin-top: 0px;
+}
+
+#lastNameError {
+    margin-left: 155px;
+}
+
+#ageError {
+    margin-top: -10px;
+    margin-left: 75px;
+    
+}
+
+#dateOfBirthError {
+    margin-left: 155px;
+  
+}
+
+#genderError {
+    margin-left: 155px;
+}
+
+
+select {
+    height: 28px;
+    border-color: steelblue;
+    border-width: 1.5px;
+    margin-left: 46px;
+    width:180px;
+}
+
+#ageLabel {
+    color: blue;
+    font-size: 14px;
+    margin-left: 300px;
+}
+
+#addressLabel {
+    margin-top: 1000px;
+}
+.Delete {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #D3D3D3;
+    color: red;
+    margin-left:0px;
+    margin-top: 10px;
+}
+.Save {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007FFF;
+    color: black;
+    margin-left: 0px;
+    margin-top: 10px;
+}
+.Cancel {
+    width: 20%;
+    padding: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #D3D3D3;
+    color: black;
+    margin-right: 20px;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+.Error {
+    margin-left: 95px;
+    position:fixed;
+    font-size: 12px;
+    color: red;
+    opacity: 1;
+  
+}
+.

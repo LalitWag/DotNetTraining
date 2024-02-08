@@ -1,0 +1,59 @@
+﻿@page "/_Host"
+@inject CommonLogic.Student Student
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+
+<h3>Student List</h3>
+
+@if (Students != null && Students.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Age</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Students)
+            {
+                <tr>
+                    <td>@student.Id</td>
+                    <td>@student.FirstName</td>
+                    <td>@student.LastName</td>
+                    <td>@student.Age</td>
+                    <td>
+                        <button @onclick="() => EditStudent(student.Id)">Edit</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No students available.</p>
+}
+
+<button @onclick="GoToAddEditPage">Add Student</button>
+
+@code {
+    private List<CommonLogic.Student> Students;
+
+    protected override void OnInitialized()
+    {
+        Students = CommonLogic.Student.GetAllStudents();
+    }
+
+    private void GoToAddEditPage()
+    {
+        NavigationManager.NavigateTo("/Addedit");
+    }
+
+    private void EditStudent(int studentId)
+    {
+        NavigationManager.NavigateTo($"/Addedit/{studentId}");
+    }
+}

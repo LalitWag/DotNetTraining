@@ -1,0 +1,190 @@
+﻿@page "/AddEdit"
+@page "/AddEdit/{studentId}"
+@using Microsoft.AspNetCore.Components.Forms
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+@inject CommonLogic.IStudentService StudentService
+@using CommonLogic
+
+    <EditForm Model="@StudentModel" OnValidSubmit="SaveStudent">
+    <DataAnnotationsValidator />
+    <ValidationSummary/>
+
+    <div class="container">
+        <h1>
+            @{
+                if (string.IsNullOrEmpty(studentId))
+                {
+                    <text>@CommonLogic.Student.AddStudentLabel</text>;
+                }
+                else
+                {
+                    <text>@CommonLogic.Student.EditStudentLabel</text>;
+                }
+            }
+        </h1>
+
+
+    <form>
+        <div class="form-group">
+                <label for="firstName">@CommonLogic.Student.FirstNameLabelText<span style="color: red;">*</span></label>
+                <input input maxlength="15" type="text" id="firstName" name="firstName" placeholder="@CommonLogic.Student.FirstNamePlaceholder" onkeydown="return /[a-zA-Z ]/i.test(event.key)" @bind="StudentModel.FirstName" />
+                <ValidationMessage For="@(() => StudentModel.FirstName)" />
+        </div>
+    @*         <label id="" class="error-label"></label> *@
+
+        <div class="form-group">
+                <label for="lastName">@CommonLogic.Student.LastNameLabelText<span style="color: red;">*</span></label>
+                <input input maxlength="18" type="text" id="lastName" name="lastName" placeholder="@CommonLogic.Student.LastNamePlaceholder" onkeydown="return /[a-zA-Z ]/i.test(event.key)" @bind=" StudentModel.LastName" />
+        </div>
+           
+
+         <div class="form-group">
+                <label for="gender">@CommonLogic.Student.GenderLabelText<span style="color: red;">*</span></label>
+            <select name="Gender" id="gender" @bind="StudentModel.Gender">
+                    <option value="">Select the Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+            </select>
+          </div>
+
+            
+
+            <div class="form-group">
+                
+                <label for="dateOfBirth">@CommonLogic.Student.DateOfBirthLabelText<span style="color: red;">*</span></label>
+                <input type="date" id="dateOfBirth" name="dateOfBirth" @bind="StudentModel.DateOfBirth" @oninput="UpdateAge" />
+
+
+                <label id="age1" for="age">@CommonLogic.Student.AgeLabelText<span style="color: red;">*</span></label>
+                <input input="2" type="number" id="age" name="age"  @bind="StudentModel.Age" />
+
+             
+                <label style="margin-left: 5px;">years</label>
+                
+            </div>
+           
+            <div class="form-group">
+                <label for="class">@CommonLogic.Student.ClassLabelText</label>
+                <input type="text" id="class" name="class" placeholder="@CommonLogic.Student.ClassPlaceholder" @bind="StudentModel.Class";" />
+            </div>
+
+            <div class="form-group">
+                <label style for="address">@CommonLogic.Student.AddressLabelText</label>
+                <textarea style="resize:none" id="address" name="address" rows="3" placeholder=@CommonLogic.Student.AddressPlaceholder @bind="StudentModel.Address"></textarea>
+
+            </div>
+        <!-- Add other form fields as needed -->
+       <div class="form-group">
+        @if (!string.IsNullOrEmpty(studentId))
+        {
+          <button type="button" class="delete-button" @onclick="DeleteStudent">@CommonLogic.Student.DeleteButtonText</button>
+        }
+      else
+       {
+         <button type="button" class="delete-button" style="background-color: white; color: white;" disabled>Delete</button>
+        }
+                <button type="button" class="submit-button" @onclick="SaveStudent">@CommonLogic.Student.SaveButtonText</button>
+                <button type="button" class="cancel-button" @onclick="Cancel">@CommonLogic.Student.CancelButttonText</button>
+            </div>
+    </form>
+    
+</div>
+</EditForm>
+@code {
+    private EditContext editContext;
+    private CommonLogic.Student? StudentModel;
+
+    [Parameter]
+    public string studentId { get; set; }
+
+    protected override void OnInitialized()
+    {
+
+        if (!string.IsNullOrEmpty(studentId) && int.TryParse(studentId, out int id))
+        {
+            StudentModel = CommonLogic.Student.GetAllStudents().FirstOrDefault(s => s.studentId == id);
+        }
+        else
+        {
+            StudentModel = new CommonLogic.Student();
+        }
+    }
+
+    private void SaveStudent()
+    {   
+        if (editContext == null)
+        {
+            editContext = new EditContext(StudentModel);
+        }
+
+        if (editContext.Validate())
+        {
+            if (string.IsNullOrEmpty(studentId))
+            {
+                // Adding a new student
+                StudentService.AddStudent(StudentModel);
+            }
+            else
+            {
+                // Updating an existing student
+                StudentService.UpdateStudent(StudentModel);
+            }
+
+            NavigationManager.NavigateTo("/");
+        }
+
+
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void DeleteStudent()
+    {
+        if (!string.IsNullOrEmpty(studentId))
+        {
+            StudentService.DeleteStudent(int.Parse(studentId));
+
+            NavigationManager.NavigateTo("/");
+        }
+    }
+    
+    private void UpdateAge(ChangeEventArgs args)
+    {
+        // Update Age based on Date of Birth
+        if (DateTime.TryParse(args.Value.ToString(), out DateTime dob))
+        {
+            StudentModel.Age = CalculateAge(dob);
+        }
+    }
+
+    private void UpdateDateOfBirth(ChangeEventArgs args)
+    {
+        // Update Date of Birth based on Age
+        if (int.TryParse(args.Value.ToString(), out int age))
+        {
+            StudentModel.DateOfBirth = DateTime.Today.AddYears(-age);
+        }
+    }
+
+    private int CalculateAge(DateTime dateOfBirth)
+    {
+        // Calculate age based on Date of Birth
+        int age = DateTime.Today.Year - dateOfBirth.Year;
+
+        if (dateOfBirth > DateTime.Today.AddYears(-age))
+        {
+            age--;
+        }
+
+        return age;
+    }
+  
+
+    
+}
+    
+
