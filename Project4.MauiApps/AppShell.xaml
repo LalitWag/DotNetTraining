@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Project4.MauiApps.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Project4.MauiApps"
+    xmlns:views="clr-namespace:Project4.MauiApps.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="Project4.MauiApps"
+    TitleColor="White"
+    BackgroundColor="#512BD4">
+
+    <ShellContent
+        Title="OurStudents"
+        ContentTemplate="{DataTemplate views:OurStudents}"
+        Route="OurStudents" />
+    </Shell>

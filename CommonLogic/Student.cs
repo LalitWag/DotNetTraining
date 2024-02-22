@@ -37,10 +37,12 @@ namespace CommonLogic
         public const string ClassPlaceholder = "Please Enter Your Class...";
         public const string AddressPlaceholder = "Please Enter Your Address...";
 
-       
+
 
         // Define the Student class
         public int studentId { get; set; }
+
+
         [Required(ErrorMessage = "First Name is required")]
         [StringLength(15, MinimumLength = 3, ErrorMessage = "First Name should be between 3 and 15 characters")]
         public string FirstName { get; set; }
@@ -61,7 +63,7 @@ namespace CommonLogic
 
         public string Class { get; set; }
         public string Address { get; set; }
-       
+        public string FullName => $"{FirstName} {LastName}";
 
         // Methods for CRUD operations
         public static List<Student> GetAllStudents()
@@ -100,8 +102,8 @@ namespace CommonLogic
             return new List<Student>
             {
                 new Student { studentId = 1, FirstName = "Rameshwar", LastName = "Mule",Gender = "Male", DateOfBirth = new DateTime(1990, 1, 1), Age = 29, Class = "10th", Address = " Mumbai"},
-                new Student { studentId = 2, FirstName = "Deepak", LastName = "Gunjal", Gender = "Male", DateOfBirth = new DateTime(1990, 1, 1), Age = 22, Class = "13th", Address = "Pune"}
-                // Add more demo data as needed...
+                new Student { studentId = 2, FirstName = "Deepak", LastName = "Patil", Gender = "Male", DateOfBirth = new DateTime(1990, 1, 1), Age = 22, Class = "13th", Address = "Pune"}
+                // Add more demo data as needed.........
             };
         }
     }
